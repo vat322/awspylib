@@ -1,0 +1,67 @@
+Copyright (c) 2008, Kiran Bhageshpur <kiran_bhageshpur@hotmail.com>
+
+http://code.google.com/p/awspylib
+
+-------------------
+Directory Structure
+-------------------
+
+<awspylib>
+    awspylib-0.5.tar.gz : Linux source distribution
+    awspylin-0.5.zip    : Windows source distribution
+    MANIFEST.in         : Required to create distributions using distutil
+    README.txt          : Introduction to awspylib
+    setup.py            : Required to create distributions using distutil
+    aws_config.py       : module that reads and set's up the configuration for the library
+    aws_exception.py    : awspylib exceptions
+    aws_genutilities.py : moudule with numerous utility functions used by the other modules & packages
+    <aws_s3>
+        __init__.py
+        s3_cli.py       : CLI interface to S3.
+        s3_rest.py      : module with lower level code to connect and communication with S3
+        s3_util.py      : module with the interfaces to S3
+    <config>
+        aws.properties  : configuration file with AWS credentials and other config options
+        logconfig.ini   : awspylib log configuration file
+    <docs>
+        awspylib.txt    : This file
+    <test>
+        __init__.py
+        test_s3.py      : Tests to exercise S3 interface within awspylib
+
+------------------------------
+Installation and Configuration
+------------------------------
+
+- Source can be downloaded from http://code.google.com/p/awspylib/
+
+- Ensure that the root directory where the code is checked out to is included in PYTHONPATH
+
+- If you are using the source distributions (awspylib-x.y.tar.gz or awspylib-x.y.zip) then you can install the library
+  as follows:
+  
+    Expand the distribution in a temporary directory (TMP)
+    cd to TMP/awspylib-x.y/awspylib
+    %% python setup.py install
+
+- Edit awspylib/config/aws.properties and add your aws credentials (Access Key and Secret Key)
+
+----------------------
+Running the test suite
+----------------------
+The test suite contained in awspylib/test/test_s3.py exercises all the interfaces to S3.  Also included is performance 
+test suite where-in files with random content and varied sizes are created and time to upload to S3 and download from S3
+measured.
+
+%% cd awspylib/test
+%% python test_s3.py
+
+-------------
+Using the CLI
+-------------
+
+The menus in the CLI ought to be self explanatory.
+
+%% cd awspylib/aws_s3
+%% python s3_cli.py
+
