@@ -34,6 +34,7 @@ import AWSPyLib.AWS_GenUtilities as Util
 import AWSPyLib.AWS_S3.S3Util as S3Util
 
 
+TEST_FILE_NAME = 'testfile.txt'
 TEST_DIR_ROOT = 'TEST-DATA'
 NUMBER_OF_DIR_LEVELS = 2
 NUMBER_OF_DIR        = 2
@@ -90,7 +91,6 @@ def test_s3():
 
     AllBuckets = S3Util.AWS_S3( AWSConnectionObject  = conn )
 
-    import shutil
 
     test = 'TEST-1'
     print '%s: Getting List of Buckets' % test
@@ -112,16 +112,8 @@ def test_s3():
     else:
         print '\t%s: - Success!' % test
 
-    test = 'TEST-3'
-    print '%s: Getting List of Buckets' % test
-    try:
-        AllBuckets.get_list_of_buckets ( )
-    except Exception, e:
-        print '\t%s: - FAILED! (%s)' % (test, e)
-    else:
-        print '\t%s: - Success!' % test
 
-    test = 'TEST-4'
+    test = 'TEST-3'
     print '%s: Deleting bucket=%s' % (test, bucket)
     try:        
         AllBuckets.delete_bucket(bucket)
@@ -130,16 +122,8 @@ def test_s3():
     else:
         print '\t%s: - Success!' % test
 
-    test = 'TEST-5'
-    print '%s: Getting List of Buckets' % test
-    try:
-        AllBuckets.get_list_of_buckets ( )
-    except Exception, e:
-        print '\t%s: - FAILED! (%s)' % (test, e)
-    else:
-        print '\t%s: - Success!' % test
 
-    test = 'TEST-5a'
+    test = 'TEST-4'
     print '%s: Deleting recursively a non-existant bucket. Should Fail!' % test
     try:
         AllBuckets.delete_bucket_recursive( u'doesnotexist')
@@ -148,13 +132,18 @@ def test_s3():
     else:
         print '\t%s: - FAILED! (%s)' % (test, e)
 
-    test = 'TEST-5b'
+
+    # If it does not exist, make a local 100KB  test file with random data
+    if (os.path.exists ( TEST_FILE_NAME ) == False ):
+        _make_test_file_( TEST_FILE_NAME, 1024*100)
+        
+    test = 'TEST-5'
     print '%s: Deleting bucket with content' % test
     bucket = u'AWSPyLib-testingbucket98765'
     try:
         AllBuckets.add_bucket(  bucket )
         key = S3Util.AWS_Key(conn, bucket, u'testkey.key')
-        key.put_object_from_file ( 'test.txt')
+        key.put_object_from_file ( TEST_FILE_NAME)
         AllBuckets.delete_bucket_recursive (  bucket )
     except Exception, e:
         print '\t%s: - FAILED! (%s)' % (test, e)
@@ -164,150 +153,95 @@ def test_s3():
     bucket = u'AWSPyLib-testingbucket12345'
     AllBuckets.add_bucket( bucket )
 
-    shutil.copyfile( 'test.txt', 'mytest.txt' )
-
-    fileName = 'mytest.txt'
-    keyName = 'mytest-key.txt'
-
-    key = u'nonexistingkey'
-    file = 'nonexistingfile.file'
-
+    keyName = TEST_FILE_NAME
+    
     test = 'TEST-6'
     test_key = S3Util.AWS_Key(conn,bucket, key)
-    print '%s: Uploading file=%s to key=%s. Fails in IOError' % (test, file, key)
+    print '%s: Uploading file=%s to key=%s. Should fail with IOError' % (test, 'nonexistingfile.file', keyName)
     try:
-        test_key.put_object_from_file( file )
+        test_key.put_object_from_file( 'nonexistingfile.file' )
     except Exception, e:
         print '\t%s: - Success' % test
     else:
         print '\t%s: - FAILED' % test
-
+        
     test = 'TEST-7'
-    print '%s: Uploading file=%s to key=%s. Should succeed!' % (test, fileName, key)        
+    test_key = S3Util.AWS_Key(conn,bucket, keyName)    
+    print '%s: Uploading %s to key=%s.  Should succeed!' % (test, TEST_FILE_NAME, keyName)
     try:
-        test_key.put_object_from_file( fileName )
+        test_key.put_object_from_file( TEST_FILE_NAME )
     except Exception, e:
-        print '\t%s: - FAILED' % test
+        print '\t%s: - FAILED! (%s)' % (test, e)
     else:
         print '\t%s: - Success!' % test
+
 
     test = 'TEST-8'
-    print '%s: Deleting key=%s. Should succeed!' % (test, key)
-    try:
-        test_key.delete_object( )
-    except Exception, e:
-        print '\t%s: - FAILED! (%s)' % (test, e)
+    print '%s: Sync Upload %s to key=%s.  Should succeed-NOP!' % (test, TEST_FILE_NAME, keyName)
+    f = test_key.sync_upload_from_file(TEST_FILE_NAME)
+    if (f):
+        print ('\t%s: - FAILED') % test
     else:
-        print '\t%s: - Success!' % test
-
-
-    test_key = S3Util.AWS_Key(conn,bucket, keyName)
+        print ('\t%s: - Success') % test
 
     test = 'TEST-9'
-    print '%s: Uploading file=%s to key=%s.  Fails in IOError' % (test, file, keyName)
-    try:
-        test_key.put_object_from_file( file )
-    except Exception, e:
-        print '\t%s: - Success' % test
-    else:
-        print '\t%s: - FAILED' % test
-
-    test = 'TEST-10'
-    print '%s: Uploading %s to key=%s.  Should succeed!' % (test, fileName, keyName)
-    try:
-        test_key.put_object_from_file( fileName )
-    except Exception, e:
-        print '\t%s: - FAILED! (%s)' % (test, e)
-    else:
-        print '\t%s: - Success!' % test
-
-
-    test = 'TEST-11'
-    print '%s: Sync Upload %s to key=%s.  Should succeed-NOP!' % (test, fileName, keyName)
-    f = test_key.sync_upload_from_file(fileName)
+    print '%s: Sync Download to %s from key=%s.  Should succeed-NOP' % (test, TEST_FILE_NAME, keyName)
+    f = test_key.sync_download_to_file(TEST_FILE_NAME)
     if (f):
         print ('\t%s: - FAILED') % test
     else:
         print ('\t%s: - Success') % test
 
-    test = 'TEST-12'
-    print '%s: Sync Download to %s from key=%s.  Should succeed-NOP' % (test, fileName, keyName)
-    f = test_key.sync_download_to_file(fileName)
-    if (f):
-        print ('\t%s: - FAILED') % test
-    else:
-        print ('\t%s: - Success') % test
-
-    fp = open ( fileName, 'wb' )
+    fp = open ( TEST_FILE_NAME, 'wb' )
     fp.seek(0, os.SEEK_END)
     fp.write ( '0000000000000000000000000000000')
     fp.flush()
     fp.close()
 
-    test = 'TEST-13'
-    print '%s: Sync Upload %s to key=%s AFTER MODIFICATION  Should succeed!' % (test, fileName, keyName)
-    f = test_key.sync_upload_from_file (fileName)
+    test = 'TEST-10'
+    print '%s: Sync Upload %s to key=%s AFTER MODIFICATION  Should succeed!' % (test, TEST_FILE_NAME, keyName)
+    f = test_key.sync_upload_from_file (TEST_FILE_NAME)
     if not f:
         print ('\t%s: - FAILED') % test
     else:
         print ('\t%s: - Success') % test
 
-    fp = open ( fileName, 'wb' )
+    fp = open ( TEST_FILE_NAME, 'wb' )
     fp.seek(0, os.SEEK_END)
     fp.write ( '11111111111111111111111111111111')
     fp.flush()
     fp.close()
 
-    test = 'TEST-14'
-    print '%s: Sync Download to %s from key=%s AFTER MODIFICATION  Should succeed!' % (test, fileName, keyName)
-    f = test_key.sync_download_to_file (fileName)
+    test = 'TEST-11'
+    print '%s: Sync Download to %s from key=%s AFTER MODIFICATION  Should succeed!' % (test, TEST_FILE_NAME, keyName)
+    f = test_key.sync_download_to_file (TEST_FILE_NAME)
     if not f:
         print ('\t%s: - FAILED') % test
     else:
         print ('\t%s: - Success') % test
 
-    key = 'boguskey'
-    test_key = S3Util.AWS_Key(conn,bucket, key)
-
-    test = 'TEST-15'
-    print '%s: Download key=%s to file=%s. Fails on key not found!' % (test, key, file)
+    
+    test = 'TEST-12'
+    test_key = S3Util.AWS_Key(conn,bucket, 'boguskey')
+    print '%s: Downloading key=%s to file=%s. Fails on not found!' % (test, key, TEST_FILE_NAME)
     try:
-        test_key.get_object_to_file (file )
+        test_key.get_object_to_file (TEST_FILE_NAME)
     except Exception, e:
         print '\t%s: - Success' % test
     else:
         print '\t%s: - FAILED' % test
 
-    test = 'TEST-16'
-    print '%s: Downloading key=%s to file=%s. Fails on not found!' % (test, key, fileName)
+    test = 'TEST-13'
+    test_key = S3Util.AWS_Key(conn,bucket, keyName)
+    print '%s: Dowload key=%s to file=%s.  Should succeed!' % (test, keyName, TEST_FILE_NAME)
     try:
-        test_key.get_object_to_file (fileName)
-    except Exception, e:
-        print '\t%s: - Success' % test
-    else:
-        print '\t%s: - FAILED' % test
-
-    test_key = S3Util.AWS_Key(conn,u'AWSPyLib-testingbucket12345', keyName)
-
-    test = 'TEST-17'
-    print '%s: Download key=%s to file=%s.  Should succeed!' % (test, keyName, file)
-    try:
-        test_key.get_object_to_file (file)
+        test_key.get_object_to_file (TEST_FILE_NAME)
     except Exception, e:
         print '\t%s: - FAILED! (%s)' % (test, e)
     else:
         print '\t%s: - Success!' % test
 
-    test = 'TEST-18'
-    print '%s: Dowload key=%s to file=%s.  Should succeed!' % (test, keyName, fileName)
-    try:
-        test_key.get_object_to_file (fileName)
-    except Exception, e:
-        print '\t%s: - FAILED! (%s)' % (test, e)
-    else:
-        print '\t%s: - Success!' % test
-
-    test = 'TEST-19'
+    test = 'TEST-14'
     print '%s: Deleting key=%s.  Should succeed!' % (test, keyName)
     try:
         test_key.delete_object ( )
@@ -316,7 +250,7 @@ def test_s3():
     else:
         print '\t%s: - Success!' % test
 
-    test = 'TEST-20'
+    test = 'TEST-15'
     print '%s: Deleting bucket=%s Should succeed!' % (test, bucket)
     try:
         AllBuckets.delete_bucket( bucket )
@@ -325,10 +259,8 @@ def test_s3():
     else:
         print '\t%s: - Success!' % test
 
-    os.remove ( fileName )
-    os.remove ( file )
         
-    test = 'TEST-21'
+    test = 'TEST-16'
     root_dir = TEST_DIR_ROOT
     bucket = u'AWSPyLib-testbucket-dirupload'
     print '%s: Recursively upload entire directory (%s) to %s' % (test, root_dir, bucket)
@@ -342,7 +274,7 @@ def test_s3():
     else:
         print '\t%s: - Success!' % test
 
-    test = 'TEST-22'
+    test = 'TEST-17'
     download_dir = 'DOWNLOAD-DIR'
     if (os.path.exists(download_dir) == False):
         os.mkdir(download_dir)
@@ -355,8 +287,9 @@ def test_s3():
         print '\t%s: - Success!' % test
         
     Util.delete_directory(download_dir)
+    os.remove(TEST_FILE_NAME)
     
-    test = 'TEST-23'
+    test = 'TEST-18'
     print '%s: Recursively delete all contents of bucket (%s)' % (test, bucket)
     try:
         AllBuckets.delete_bucket_recursive ( bucket )
