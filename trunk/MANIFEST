@@ -1,0 +1,17 @@
+README.txt
+setup.py
+MANIFEST
+AWSPyLib\AWSConfig.py
+AWSPyLib\AWS_Exception.py
+AWSPyLib\AWS_GenUtilities.py
+AWSPyLib\__init__.py
+AWSPyLib\AWS_S3\S3CLI.py
+AWSPyLib\AWS_S3\S3Rest.py
+AWSPyLib\AWS_S3\S3Util.py
+AWSPyLib\AWS_S3\__init__.py
+AWSPyLib\test\__init__.py
+AWSPyLib\test\test_s3.py
+AWSPyLib\test\test.txt
+AWSPyLib\config\AWS.properties
+AWSPyLib\config\logconfig.ini
+AWSPyLib\docs\AWSPyLib.txt
