@@ -7,8 +7,6 @@ Directory Structure
 -------------------
 
 <awspylib>
-    awspylib-0.5.tar.gz : Linux source distribution
-    awspylin-0.5.zip    : Windows source distribution
     MANIFEST.in         : Required to create distributions using distutil
     README.txt          : Introduction to awspylib
     setup.py            : Required to create distributions using distutil
@@ -28,6 +26,10 @@ Directory Structure
     <test>
         __init__.py
         test_s3.py      : Tests to exercise S3 interface within awspylib
+    <dist>
+	awspylib-0.5.tar.gz : Linux source distribution
+        awspylin-0.5.zip    : Windows source distribution
+
 
 ------------------------------
 Installation and Configuration
