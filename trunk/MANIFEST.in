@@ -1,0 +1,9 @@
+include README.txt
+include setup.py
+include MANIFEST
+include awspylib\*.py
+include awspylib\aws_s3\*.py
+include awspylib\test\*.py
+include awspylib\config\aws.properties
+include awspylib\config\logconfig.ini
+include awspylib\*.txt
