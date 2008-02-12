@@ -33,7 +33,7 @@ doc="""
 """
 
 LOGCONFIG_FILENAME = 'AWSPyLib/config/logconfig.ini'
-S3CONFIG_FILENAME  = 'AWSPyLib/config/aws.properties'
+S3CONFIG_FILENAME  = 'AWSPyLib/config/AWS.properties'
 
 class AWSConfig:
     
