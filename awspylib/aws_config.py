@@ -84,14 +84,14 @@ class AWSConfig:
         if ConfigOptions.inputfile:
             input = open (ConfigOptions.inputfile, 'r' )
         else:
-            input_file_name = Util.findfile(S3CONFIG_FILENAME)
+            input_file_name = Util.find_file(S3CONFIG_FILENAME)
             if (input_file_name == None):
                 print ('Could not find input configuration file (%s) in PYTHONPATH' % S3CONFIG_FILENAME)
                 sys.exit(0)
             else:
                 input = open (input_file_name)
 
-        log_config_file = Util.findfile (LOGCONFIG_FILENAME)
+        log_config_file = Util.find_file (LOGCONFIG_FILENAME)
         if (log_config_file == None):
             print ('Could not find log configuration file (%s) in PYTHONPATH' % LOGCONFIG_FILENAME)
             sys.exit(0)

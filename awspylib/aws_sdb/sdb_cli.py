@@ -75,7 +75,7 @@ class BucketContent_CLI (S3Util.AWS_Bucket ):
     def CLI_ListAllKeys (self ):
         self._reinit_( )
         self.get_list_of_keys_in_bucket( )
-        Util.print_dir_list(self.bucketContent)
+        Util.print_dir_list (self.bucketContent)
         
     def CLI_ListKeysAsFSTree( self ):        
 

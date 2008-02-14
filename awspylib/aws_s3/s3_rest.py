@@ -23,7 +23,7 @@ import logging
 
 from awspylib.aws_exception import *
 from awspylib.aws_config import Config
-from awspylib.aws_genutilities import TIME_FORMAT
+from awspylib.aws_genutilities import S3_TIME_FORMAT
 
 DEFAULT_HOST = 's3.amazonaws.com'
 PORTS_BY_SECURITY = { True: 443, False: 80 }
@@ -235,7 +235,7 @@ class AWSAuthConnection:
 
     def add_aws_auth_header(self, headers, method, bucket, key, query_args):
         if not headers.has_key('Date'):
-            headers['Date'] = time.strftime(TIME_FORMAT, time.gmtime())
+            headers['Date'] = time.strftime(S3_TIME_FORMAT, time.gmtime())
 
         c_string = canonical_string(method, bucket, key, query_args, headers)            
         headers['Authorization'] = \
