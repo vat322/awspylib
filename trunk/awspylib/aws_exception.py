@@ -35,6 +35,17 @@ class S3Error(Exception):
         return 'Error %d(%s). %s on bucket=%s, key=%s\n' % \
                (self.status, self.reason, self.method, self.bucket, self.key)
 
+class SDBError(Exception):
+    
+    def __init__(self, status, reason, action):
+        self.status = status
+        self.reason = reason
+        self.action = action
+
+    def __str__(self):
+        return 'Error %d(%s) on action=%s\n' % \
+               (self.status, self.reason, self.action)
+
 class InvalidAttribute(Exception):
     
     def __init__( self, a):

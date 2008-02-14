@@ -769,9 +769,9 @@ class AWS_Key:
 
             file_info = os.stat ( fileName )
             metadata[_MD_LAST_MODIFIED_TIME_] =  \
-                    time.strftime( Util.TIME_FORMAT, time.gmtime( file_info.st_mtime ) )
+                    time.strftime( Util.S3_TIME_FORMAT, time.gmtime( file_info.st_mtime ) )
             metadata[_MD_CREATE_TIME_] = \
-                    time.strftime( Util.TIME_FORMAT, time.gmtime( file_info.st_ctime ) )                    
+                    time.strftime( Util.S3_TIME_FORMAT, time.gmtime( file_info.st_ctime ) )                    
             metadata[_MD_SIZE_] = str(file_info.st_size)
 
             if (self.CONN.is_secure):
@@ -938,11 +938,11 @@ class AWS_Key:
 
             if ( file_info.st_size == int ( object_info._get_metadata_value_( _MD_SIZE_ ) ) ):
                 # The file sizes are the same, next check the last modified times
-                last_modified = time.strftime( Util.TIME_FORMAT, time.gmtime( file_info.st_mtime ) )
-                if (time.strftime( Util.TIME_FORMAT, time.gmtime( file_info.st_mtime ) ) == \
+                last_modified = time.strftime( Util.S3_TIME_FORMAT, time.gmtime( file_info.st_mtime ) )
+                if (time.strftime( Util.S3_TIME_FORMAT, time.gmtime( file_info.st_mtime ) ) == \
                     object_info._get_metadata_value_ ( _MD_LAST_MODIFIED_TIME_ ) ):
                     # The last modified times are also identical, let's check the hash as a last resort
-                    hash = Util.getHashFromFileName ( fileName )        
+                    hash = Util.get_hash_from_filename ( fileName )        
                     if (hash == object_info._get_etag_( ) ):
                         fUpload = False
 
@@ -972,11 +972,11 @@ class AWS_Key:
 
                 if ( file_info.st_size == int ( object_info._get_metadata_value_( _MD_SIZE_ ) ) ):
                     # The file sizes are the same, next check the last modified times
-                    last_modified = time.strftime( Util.TIME_FORMAT, time.gmtime( file_info.st_mtime ) )
-                    if (time.strftime( Util.TIME_FORMAT, time.gmtime( file_info.st_mtime ) ) == \
+                    last_modified = time.strftime( Util.S3_TIME_FORMAT, time.gmtime( file_info.st_mtime ) )
+                    if (time.strftime( Util.S3_TIME_FORMAT, time.gmtime( file_info.st_mtime ) ) == \
                         object_info._get_metadata_value_ (_MD_LAST_MODIFIED_TIME_) ):
                         # The last modified times are also identical, let's check the hash as a last resort
-                        hash = Util.getHashFromFileName ( fileName )        
+                        hash = Util.get_hash_from_filename ( fileName )        
                         if (hash == object_info._get_etag_( ) ):
                             fDownload = False
 

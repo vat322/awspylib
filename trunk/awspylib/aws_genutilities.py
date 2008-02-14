@@ -36,7 +36,8 @@ This module contains various utility functions and classes
 """
 
 CHUNK_SIZE = 65536
-TIME_FORMAT = '%a, %d %b %Y %H:%M:%S GMT'
+SDB_TIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
+S3_TIME_FORMAT = '%a, %d %b %Y %H:%M:%S GMT'
 DELIMITER = u'|'
 indent = 0
 
@@ -80,7 +81,7 @@ class my_file:
         self.__name__ = my_file.__name__
 
 
-def getDirDepth( dirName ):
+def get_dir_depth( dirName ):
     doc="""
        This function takes a string that represents a directory or file
        and returns the depth of the leaf node.
@@ -103,7 +104,7 @@ def getDirDepth( dirName ):
     return (depth)
 
 
-def printTree( flatTree, fPrintDetails = False ):
+def print_tree( flatTree, fPrintDetails = False ):
     doc="""
        Takes a ordered list of keys and prints it our in a directory like fashion
        Assumes that the keyList is a flattened directory
@@ -114,12 +115,12 @@ def printTree( flatTree, fPrintDetails = False ):
         if ( entry['type'] == 'dir' ):
             dir = entry['name']
             j = dir.rfind(SEPARATOR)
-            indent = getDirDepth ( dir[:] )               
+            indent = get_dir_depth ( dir[:] )               
             print '  '*indent, '[%d] %s' % (entry['index'], dir[j+1:])
         elif ( entry['type'] == 'file' ):
             file = entry['name']
             i = file.rfind( SEPARATOR)
-            indent = getDirDepth ( file[:] )
+            indent = get_dir_depth ( file[:] )
             if ( fPrintDetails):
                 print '  '*indent, '[%d] %s %d %s' % (entry['index'], file[i+1:], entry['size'], entry['last_modified'])
             else:
@@ -129,7 +130,7 @@ def printTree( flatTree, fPrintDetails = False ):
 
     return (count)
 
-def printDirList(list, fPrintDetails=False):
+def print_dir_list(list, fPrintDetails=False):
     index = 0
     for entry in list:
         if (fPrintDetails):
@@ -140,7 +141,7 @@ def printDirList(list, fPrintDetails=False):
 
     return ( index - 1)
     
-def printList ( list, fPrintDetails = False ):
+def print_list ( list, fPrintDetails = False ):
     doc="""
        Takes list of entries and pretty prints it out with indices
        Returns the number of entries printed
@@ -155,7 +156,7 @@ def printList ( list, fPrintDetails = False ):
 
     return ( index - 1)
 
-def getStringInput ( prompt ):
+def get_string_input ( prompt ):
     while True:
         input = raw_input(prompt)
         if (input != ''):
@@ -164,7 +165,7 @@ def getStringInput ( prompt ):
     return (input)
 
 
-def getDigitInput( low_range = 0, high_range = 99 ):
+def get_digit_input( low_range = 0, high_range = 99 ):
     fDone = False
     while not fDone:
         prompt = 'Enter[' + str(low_range) + ':' + str(high_range) + ']-->'
@@ -180,7 +181,7 @@ def getDigitInput( low_range = 0, high_range = 99 ):
     return ( int(userInput) )
 
 
-def getInput ( config, low_range = 0, high_range = 99):
+def get_input ( config, low_range = 0, high_range = 99):
     action = None
     value = None
     while True:
@@ -204,7 +205,7 @@ def getInput ( config, low_range = 0, high_range = 99):
 
     return (action, value)
 
-def getHashFromFileName ( fileName ):
+def get_hash_from_filename ( fileName ):
 
     fp = 0
     try:
@@ -226,7 +227,7 @@ def getHashFromFileName ( fileName ):
         if fp: fp.close( )
         return ( hash.hexdigest( ) )
 
-def getHashFromFile ( fp ):
+def get_hash_from_file ( fp ):
     try:
 
         while True:
@@ -255,7 +256,7 @@ def INFO(object, spacing=10, collapse=1):
                      (method.ljust(spacing),
                       processFunc(str(getattr(object, method).__doc__)))
                      for method in methodList])
-def findfile(file):
+def find_file(file):
     doc="""
     Finds a file in PYTHONPATH.
     Returns the full path-name of file, if found, else returns None
@@ -298,4 +299,12 @@ def make_test_file( filename, file_size = 0):
         len += 1
     fp.flush()
     fp.close( )            
-    return        
+    return
+
+def sort_dictionary ( dict ):
+    doc="""
+    Sorts a dictionary of key, value pairs of type string only
+    """
+    keys = dict.keys()
+    keys.sort( cmp=lambda x,y: cmp( x.lower(), y.lower() ) )
+    return [(k, dict[k]) for k in keys]
