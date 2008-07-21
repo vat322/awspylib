@@ -32,8 +32,8 @@ doc="""
 %prog [Options] -i inputfile [-o outputfile]
 """
 
-LOGCONFIG_FILENAME = 'AWSPyLib/config/logconfig.ini'
-S3CONFIG_FILENAME  = 'AWSPyLib/config/AWS.properties'
+LOGCONFIG_FILENAME = 'awspylib/config/logconfig.ini'
+S3CONFIG_FILENAME  = 'awspylib/config/aws.properties'
 
 class AWSConfig:
     
