@@ -1,0 +1,1 @@
+A set of python libraries, CLI programs and test code to interact with amazon web services
